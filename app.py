@@ -2,7 +2,7 @@ from flask import Flask
 from flask import url_for  # 
 from markupsafe import escape
 from flask import Flask, render_template
-name = 'Grey Li'
+name = "YT's watchlist"
 movies = [
     {'title': 'My Neighbor Totoro', 'year': '1988'},
     {'title': 'Dead Poets Society', 'year': '1989'},
