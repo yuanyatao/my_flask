@@ -2,23 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
-    <link rel="icon" href="{{url_for('static',filename='icon.jpg')}}">
-    <title>{{ name }}'s Watchlist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+    <link rel="icon" href="{{ url_for('static', filename='icon.jpg') }}">
+    <title>文档识别</title>
 </head>
 <body>
-    <h2>
-        <img alt="scanner" class="scanner" src="{{url_for('static',filename='images/scanner.jpg')}}">
-        {{ name }}'s Watchlist
-        
-    </h2>
-    {# 使用 length 过滤器获取 movies 变量的长度 #}
-    <p>{{ movies|length }} Titles</p>
-    <ul class="movie-list">
-        {% for movie in movies %}  {# 迭代 movies 变量 #}
-        <li>{{ movie.title }} - {{ movie.year }}</li>  {# 等同于 movie['title'] #}
-        {% endfor %}  {# 使用 endfor 标签结束 for 语句 #}
-    </ul>
+    <h1>欢迎来到文档识别网站</h1>
+
+    <div class="upload-section">
+        <div class="left-section">
+            <h2>上传图片</h2>
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" name="file" multiple>
+                <input type="submit" value="上传">
+            </form>
+            <div class="image-queue">
+                {% if filename %}
+                    <img src="{{ url_for('static', filename=filename) }}" alt="上传图片">
+                {% endif %}
+            </div>
+        </div>
+        <div class="right-section">
+            <h2>转换后的图片</h2>
+            {% if filename %}
+                <img src="{{ url_for('static', filename=filename) }}" alt="转换后的图片">
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="button-section">
+        <button class="action-button">文档切边</button>
+        <button class="action-button">版面分析</button>
+        <button class="action-button">表格提取</button>
+        <button class="action-button">版面还原</button>
+    </div>
+
     <footer>
         <small>&copy; 2023 <a href="https://github.com/yuanyatao/my_flask">Yuantao's github</a></small>
     </footer>
