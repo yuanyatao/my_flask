@@ -3,48 +3,58 @@ import os
 
 app = Flask(__name__)
 
-# 设置上传文件的保存目录
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    if request.method == 'POST':
-        return upload()
     return render_template('index.html')
-
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    # 获取上传的文件
-    uploaded_files = request.files.getlist('file')
+    if 'file' not in request.files:
+        return '没有选择文件'
 
-    # 创建保存文件的文件夹
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
+    file = request.files['file']
+    if file.filename == '':
+        return '没有选择文件'
 
-    filenames = []
-    for file in uploaded_files:
-        if file:
-            # 保存文件到服务器
-            filename = file.filename
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            filenames.append(filename)
+    if file:
+        filename = file.filename
+        file.save(os.path.join('static/uploads', filename))
+        return render_template('index.html', filenames=get_filenames_from_folder('uploads'))
 
+@app.route('/process/button1', methods=['POST'])
+def process_button1():
+    filenames = get_filenames_from_folder('products')
+    # 处理按钮1的逻辑
     return render_template('index.html', filenames=filenames)
 
-@app.route('/process', methods=['POST'])
-def process():
-    action = request.form.get('action')
-    filename = request.form.get('filename')
+@app.route('/process/button2', methods=['POST'])
+def process_button2():
+    filenames = get_filenames_from_folder('products')
+    # 处理按钮2的逻辑
+    return render_template('index.html', filenames=filenames)
 
-    # 在这里添加相应按钮点击事件的处理逻辑
-    # 根据 action 的值进行相应的操作
+@app.route('/process/button3', methods=['POST'])
+def process_button3():
+    filenames = get_filenames_from_folder('products')
+    # 处理按钮3的逻辑
+    return render_template('index.html', filenames=filenames)
 
-    return render_template('index.html', filenames=[filename])
+@app.route('/process/button4', methods=['POST'])
+def process_button4():
+    filenames = get_filenames_from_folder('products')
+    # 处理按钮4的逻辑
+    return render_template('index.html', filenames=filenames)
+
+def get_filenames_from_folder(folder):
+    folder_path = os.path.join('static', folder)
+    filenames = []
+    for filename in os.listdir(folder_path):
+        if os.path.isfile(os.path.join(folder_path, filename)):
+            filenames.append(filename)
+    return filenames
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
 # from flask import Flask
 # from flask import url_for  # 
 # from markupsafe import escape

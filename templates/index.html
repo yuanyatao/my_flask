@@ -4,41 +4,112 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
     <link rel="icon" href="{{ url_for('static', filename='icon.jpg') }}">
-    <title>文档识别</title>
+    <title>生物混合文档识别</title>
 </head>
 <body>
-    <h1>欢迎来到文档识别网站</h1>
+    <div class="container">
+        <h1>生物混合文本识别系统</h1>
+        
+        <div class="upload-section">
+            <div class="top-section">
+                <div class="left-section">
+                    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+                        <label for="file-select" class="custom-file-select">
+                            <input type="file" id="file-select" name="file" accept="image/*">
+                            选择文件
+                        </label>
+                        <label for="confirm-upload" class="custom-file-upload">
+                            <input type="submit" id="confirm-upload" name="submit" style="display: none;">
+                            确认上传
+                        </label>
+                       
+                    </form>
+                    <div class="upload-placeholder" id="upload-area">
+                        <p>拖放文件到此处或点击按钮选择文件</p>
+                    </div>
+                    <script>
+                        var uploadArea = document.getElementById('upload-area');
+                    
+                        uploadArea.addEventListener('dragover', function(event) {
+                            event.preventDefault();
+                            uploadArea.classList.add('drag-over');
+                        });
+                    
+                        uploadArea.addEventListener('dragenter', function(event) {
+                            event.preventDefault();
+                            uploadArea.classList.add('drag-over');
+                        });
+                    
+                        uploadArea.addEventListener('dragleave', function(event) {
+                            event.preventDefault();
+                            uploadArea.classList.remove('drag-over');
+                        });
+                    
+                        uploadArea.addEventListener('drop', function(event) {
+                            event.preventDefault();
+                            uploadArea.classList.remove('drag-over');
+                    
+                            // 处理拖放的文件
+                            var files = event.dataTransfer.files;
+                            uploadFiles(files);
+                        });
+                    
+                        function uploadFiles(files) {
+                            var formData = new FormData();
+                    
+                            for (var i = 0; i < files.length; i++) {
+                                formData.append('file', files[i]);
+                            }
+                    
+                            var request = new XMLHttpRequest();
+                            request.open('POST', '/upload'); // 
+                            request.send(formData);
+                        }
+                    </script>
+                    <div class="image-queue">
+                        {% for filename in filenames %}
+                            <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="{{ filename }}">
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="right-section">
+                    <h3>转换后的图片</h3>
+                    <div class="conversion-placeholder">
+                        {% if filenames %}
+                            {% for filename in filenames %}
+                                {% if loop.index == 1 %}
+                                    <img class="convert-img" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="{{ filename }}">
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <p>没有转换后的图片</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-    <div class="upload-section">
-        <div class="left-section">
-            <h2>上传图片</h2>
-            <form method="post" enctype="multipart/form-data">
-                <input type="file" name="file" multiple>
-                <input type="submit" value="上传">
-            </form>
-            <div class="image-queue">
-                {% if filename %}
-                    <img src="{{ url_for('static', filename=filename) }}" alt="上传图片">
-                {% endif %}
+            <div class="bottom-section">
+                <div class="conversion-buttons">
+                    <form action="{{ url_for('process_button1') }}" method="POST">
+                        <button type="submit">文档切边</button>
+                    </form>
+                    <form action="{{ url_for('process_button2') }}" method="POST">
+                        <button type="submit">版面分析</button>
+                    </form>
+                    <form action="{{ url_for('process_button3') }}" method="POST">
+                        <button type="submit">表格提取</button>
+                    </form>
+                    <form action="{{ url_for('process_button4') }}" method="POST">
+                        <button type="submit">文档还原（Word）</button>
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="right-section">
-            <h2>转换后的图片</h2>
-            {% if filename %}
-                <img src="{{ url_for('static', filename=filename) }}" alt="转换后的图片">
-            {% endif %}
-        </div>
     </div>
-
-    <div class="button-section">
-        <button class="action-button">文档切边</button>
-        <button class="action-button">版面分析</button>
-        <button class="action-button">表格提取</button>
-        <button class="action-button">版面还原</button>
-    </div>
-
-    <footer>
-        <small>&copy; 2023 <a href="https://github.com/yuanyatao/my_flask">Yuantao's github</a></small>
-    </footer>
 </body>
+<footer class="footer">
+    <small>&copy; 2023 <a href="https://github.com/yuanyatao/my_flask">Yuantao's github</a></small>
+</footer>
+
 </html>
